@@ -34,3 +34,4 @@
 x64/
 *.vcxproj
 *.vsxproj.user
+.vs/
