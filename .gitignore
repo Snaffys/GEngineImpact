@@ -33,5 +33,5 @@
 
 x64/
 *.vcxproj
-*.vsxproj.user
+*.vcxproj.user
 .vs/
