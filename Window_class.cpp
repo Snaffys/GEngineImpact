@@ -21,7 +21,7 @@ void Window::processInput(GLFWwindow* window) {
 //	glViewport(0, 0, width, heigth);
 //}
 
-//void Window::glfwSetFramebufferSizeCallback(GLFWwindow* window, framebuffer_size_callback(GLFWwindow* window, int width, int heigth));
+///void Window::glfwSetFramebufferSizeCallback(GLFWwindow* window, framebuffer_size_callback(GLFWwindow* window, int width, int heigth));
 
 Window::~Window() {
 	while (!glfwWindowShouldClose(window))
