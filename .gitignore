@@ -1,6 +1,6 @@
 x64/
 *.vcxproj
-GEngineImpact.vcxproj.user
+*.vcxproj.user
 .vs/
 
 # Prerequisites
