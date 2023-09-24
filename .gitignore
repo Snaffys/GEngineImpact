@@ -1,3 +1,8 @@
+x64/
+*.vcxproj
+GEngineImpact.vcxproj.user
+.vs/
+
 # Prerequisites
 *.d
 
@@ -31,7 +36,3 @@
 *.out
 *.app
 
-x64/
-*.vcxproj
-*.vcxproj.user
-.vs/
