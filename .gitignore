@@ -1,8 +1,3 @@
-x64/
-*.vcxproj
-*.vcxproj.user
-.vs/
-
 # Prerequisites
 *.d
 
@@ -36,3 +31,9 @@ x64/
 *.out
 *.app
 
+x64/
+*.vcxproj
+*.vcxproj.user
+.vs/
+assimp/
+assimp-5.3.1/

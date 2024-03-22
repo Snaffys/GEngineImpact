@@ -1,39 +1,208 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+      <UniqueIdentifier>{63c410a8-594c-4537-b0da-c205c6957775}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{853366ed-2718-4651-8cd8-02d8db8af652}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <UniqueIdentifier>{618b5604-650e-43c1-a408-234ab17d3874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{cc69036a-2c6b-4c0c-8c8e-0f46c13bdf70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\fragment">
+      <UniqueIdentifier>{aefdbfc3-3939-4192-ac74-060b39e9706e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\vertex">
+      <UniqueIdentifier>{af3dd535-7a4c-4875-b4c8-4cf64f7cf404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\textures">
+      <UniqueIdentifier>{94d7c919-599e-4e7e-a60c-9a480c8d6803}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window_class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Headers\FBO_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Mesh_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Model_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Shader_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Texture_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\VAO_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\VBO_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Window_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Camera_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\EBO_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window_class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="Shaders\fragment\lighting.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\no_material.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\simple_shader.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\stencil_buffer.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\u_color.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\u_position.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\view_space_phong.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\visualizing_z_buffer.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\default.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\discard.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\Test.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\u_color.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\u_position.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\view_space_phong.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\default.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\simple_shader.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\stencil_buffer.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\spiderman.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\steeled_border.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\steeled_border_2.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\steeled_wooden_container.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\tree.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\window_tex.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\burned_hole.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\colored_steeled_border.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\diffuse.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\effect.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\grass.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\lion.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\minion.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\old_gold.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\snap.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="Textures\specular.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source Files\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Mesh_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Model_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Shader_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Texture_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\VAO_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\VBO_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Window_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\Camera_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\EBO_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\FBO_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source Files\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
