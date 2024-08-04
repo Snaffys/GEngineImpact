@@ -139,19 +139,24 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 frag_pos, vec3 view_dir){
 
 float CalcAttenuation(vec3 position, vec3 frag_pos, float constant, float linear, float quadratic){
     float distance = length(position - frag_pos);
+    //float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance));
     float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
     return attenuation;
 }
 
 vec3 CalcDiffuse(vec3 normal, vec3 light_direction, sampler2D material_diffuse, vec3 light_diffuse){
+    float gamma = 2.2; 
     float diff = max(dot(normal, light_direction), 0.0);
+    //vec3 diffuse = diff * light_diffuse * pow(texture(material_diffuse, tex_coords).rgb, vec3(gamma));
     vec3 diffuse = diff * light_diffuse * texture(material_diffuse, tex_coords).rgb;
     return diffuse;
 }
 
 vec3 CalcSpecular(vec3 light_direction, vec3 normal, vec3 view_dir, float material_shininess, sampler2D material_specular, vec3 light_specular){
-    vec3 reflect_dir = reflect(-light_direction, normal);   // "-" because light direction points from the fragment's position
-    float spec = pow(max(dot(view_dir, reflect_dir), 0.0), material_shininess);
+    //vec3 reflect_dir = reflect(-light_direction, normal);   // "-" because light direction points from the fragment's position
+    //float spec = pow(max(dot(view_dir, reflect_dir), 0.0), material_shininess);
+    vec3 halfway_dir = normalize(light_direction + view_dir);
+    float spec = pow(max(dot(normal, halfway_dir),0.0), material_shininess);
     vec3 specular = spec * light_specular * texture(material_specular, tex_coords).rgb;
     return specular;
 }

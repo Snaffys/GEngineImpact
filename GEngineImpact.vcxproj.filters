@@ -65,7 +65,7 @@
     <None Include="Shaders\fragment\no_material.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
-    <None Include="Shaders\fragment\simple_shader.frag">
+    <None Include="Shaders\fragment\framebuffer_shader.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
     <None Include="Shaders\fragment\stencil_buffer.frag">
@@ -104,11 +104,32 @@
     <None Include="Shaders\vertex\default.vert">
       <Filter>Resource Files\Shaders\vertex</Filter>
     </None>
-    <None Include="Shaders\vertex\simple_shader.vert">
+    <None Include="Shaders\vertex\framebuffer_shader.vert">
       <Filter>Resource Files\Shaders\vertex</Filter>
     </None>
     <None Include="Shaders\vertex\stencil_buffer.vert">
       <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\cubemap_shader.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\cubemap_shader.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\cubemap_reflection.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\cubemap_reflection.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\Test.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\cubes_instancing.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\cubes_instancing.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -204,5 +225,6 @@
     <ClCompile Include="Source Files\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source Files\test.cpp" />
   </ItemGroup>
 </Project>

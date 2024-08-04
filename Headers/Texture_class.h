@@ -1,7 +1,7 @@
-#pragma once
 #ifndef TEXTURE_CLASS_H
 #define TEXTURE_CLASS_H
 
+// For swapping
 #include <iostream>
 
 #include <glad/glad.h>
@@ -9,17 +9,32 @@
 
 #include <stb/stb_image.h>
 
+#include <stdio.h>
+
 #include <assert.h>
+
+
+#include <string>
+#include <vector>
+
+
 
 class Texture {
 public:
 	Texture() = default;
+	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL);
+	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum internal_format = NULL);
 
-	Texture(const char* image, GLenum texture, GLenum tex_wrapping, GLenum format);
+	Texture(std::string path, const std::string& directory, std::string typeName, std::string filename, bool gamma = false);
 
-	Texture(GLenum format, int img_width, int img_height, GLenum texture);
+
+	//Texture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
 
 	//Texture(const char* image, const char* tex_type, GLuint slot, GLenum format, GLenum pixel_type);
+
+
+	Texture(const int rows, const int cols, const char* faces);
+
 
 	Texture(const Texture&) = default;
 	Texture& operator = (const Texture&) = default;
@@ -28,22 +43,38 @@ public:
 	Texture& operator=(Texture&& other) noexcept;
 
 	void Bind();
+	void BindMultisample();
 	void Unbind();
 	void Delete();
 
-	GLuint id = -1;
-	std::string type;
-	std::string path;
+	void SetId(GLuint id);
+
+	GLuint GetId();
+
+	void SetType(std::string type);
+
+	std::string GetType();
+
+	void SetFilename(std::string filename);
+
+	std::string GetFilename();
+
 
 	~Texture();
 private:
-
-
 	int img_width, img_height, num_col_chan;
-
-
-
 	unsigned char* data;
+	std::string type;
+	std::string filename;
+protected:
+	GLuint id = NULL;
+};
+
+
+class MultisampledTexture : public Texture {
+public:
+	MultisampledTexture() = default;
+	MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
 };
 
 #endif

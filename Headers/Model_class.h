@@ -1,4 +1,3 @@
-#pragma once
 #ifndef MODEL_CLASS_H
 #define MODEL_CLASS_H
 
@@ -9,23 +8,31 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <filesystem>
+
 unsigned int TextureFromFile(std::string path, const std::string& directory, bool gamma = false);
 
 class Model {
 	public:
 		Model() = default;
-		Model(const char* path);
+		Model(const char* path, glm::mat4 models_pos[] = {}, unsigned int instansing_amount = 1);
 		void Draw(Shader& shader);
+		void Draw(Shader& shader, unsigned int models_amount);
 	private:
-		std::vector<Texture_model> textures_loaded;
+		unsigned int instancing_amount;
+		Texture texture;
+
+		glm::mat4* model_pos;
+
+		std::vector<Texture> textures_loaded;
 		std::vector<Mesh> meshes;
-		std::string directory;
+		std::filesystem::path directory;
 		bool gammaCorrection;
 
-		void loadModel(std::string path);
+		void loadModel(std::filesystem::path path);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Texture_model> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 };
 

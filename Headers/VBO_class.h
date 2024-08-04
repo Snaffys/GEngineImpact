@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef VBO_CLASS_H
 #define VBO_CLASS_H
 
@@ -15,16 +13,11 @@
 
 struct Vertex {
 	Vertex() = default;
-	//Vertex(float x, float y, float z, float r, float g, float b, float s, float t, float n_x, float n_y, float n_z) 
-	//	: pos(x,y,z), col(r,g,b), tex_coords(s,t), normals(n_x, n_y, n_z){};
 
 	Vertex(float x, float y, float z, float n_x, float n_y, float n_z, float s, float t)
 		: pos(x, y, z), normals(n_x, n_y, n_z), tex_coords(s, t) {};
 
-
-
 	glm::vec3 pos;
-	//glm::vec3 col;
 	glm::vec3 normals;
 	glm::vec2 tex_coords;
 };
@@ -39,7 +32,16 @@ struct VertexFramebuffer {
 	glm::vec2 tex_coords_fb;
 };
 
-class VBO{
+struct VertexCubemap {
+	VertexCubemap() = default;
+
+	VertexCubemap(float x, float y, float z)
+		:pos_cbmp(x, y, z) {};
+
+	glm::vec3 pos_cbmp;
+};
+
+class VBO {
 public:
 	VBO() = default;
 
@@ -47,7 +49,13 @@ public:
 
 	VBO(std::initializer_list<VertexFramebuffer> coords);
 
+	VBO(std::initializer_list<VertexCubemap> coords);
+
 	VBO(const std::vector<Vertex>& input_coords);
+
+	VBO(const glm::mat4 model_matrices[], unsigned int amount);
+
+	VBO(const glm::vec3 model_vec[], unsigned int amount);
 
 	VBO(VBO&& move) noexcept;
 	VBO& operator=(VBO&& other) noexcept;
@@ -62,7 +70,9 @@ private:
 
 	std::vector<VertexFramebuffer> vertices_fb;
 
-	GLuint id = -1;
+	std::vector<VertexCubemap> vertices_cbmp;
+
+	GLuint id = NULL;
 };
 
 #endif

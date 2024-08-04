@@ -1,4 +1,3 @@
-#pragma once
 #ifndef VAO_CLASS_H
 #define VAO_CLASS_H
 
@@ -16,14 +15,28 @@ public:
 	VAO(VAO&& move) noexcept;
 	VAO& operator=(VAO&& other) noexcept;
 
-	void FramebufferVAO(VBO& VBO);
+	void MatInstance(const int index, VBO& VBO);
+	void VecInstance(int index, VBO& VBO);
 	void Bind();
 	void Unbind();
 	void Delete();
 
 	~VAO();
-private:
-	GLuint id = -1;	
+protected:
+	GLuint id = NULL;
+};
+
+
+class CubemapVAO : public VAO {
+public:
+	CubemapVAO() = default;
+	CubemapVAO(VBO& VBO);
+};
+
+class FramebufferVAO : public VAO {
+public:
+	FramebufferVAO() = default;
+	FramebufferVAO(VBO& VBO);
 };
 
 #endif

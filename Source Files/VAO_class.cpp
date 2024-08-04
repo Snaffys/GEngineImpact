@@ -6,36 +6,65 @@ VAO::VAO(VBO& VBO) {
 	Bind();
 	// Binds VBO
 	VBO.Bind();
-	// Vertex
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glEnableVertexAttribArray(0);	
-	// Normals
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normals));
-	glEnableVertexAttribArray(1);
-	// Texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
-	glEnableVertexAttribArray(2);
 
-	// Fragment
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);
+	// Vertex
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, sizeof(std::declval<Vertex>().pos) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	// Normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, sizeof(std::declval<Vertex>().normals) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normals));
 	// Texture
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
-	//glEnableVertexAttribArray(2);
-	//// Normals
-	//glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float))); 
-	//glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, sizeof(std::declval<Vertex>().tex_coords) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
 	VBO.Unbind();
 }
 
-void VAO::FramebufferVAO(VBO& VBO) {
+FramebufferVAO::FramebufferVAO(VBO& VBO) {
 	glGenVertexArrays(1, &id);
 	Bind();
 	VBO.Bind();
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFramebuffer), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexFramebuffer), (void*)offsetof(VertexFramebuffer, tex_coords_fb));
+	glVertexAttribPointer(0, sizeof(std::declval<VertexFramebuffer>().pos_fb) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexFramebuffer), (void*)0);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, sizeof(std::declval<VertexFramebuffer>().tex_coords_fb) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexFramebuffer), (void*)offsetof(VertexFramebuffer, tex_coords_fb));
+	VBO.Unbind();
+}
+
+CubemapVAO::CubemapVAO(VBO& VBO) {
+	glGenVertexArrays(1, &id);
+	Bind();
+	VBO.Bind();
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, sizeof(std::declval<VertexCubemap>().pos_cbmp) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexCubemap), (void*)0);
+	VBO.Unbind();
+}
+
+void VAO::MatInstance(int index, VBO& VBO) {
+	Bind();
+	VBO.Bind();
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)0);
+	glEnableVertexAttribArray(index + 1);
+	glVertexAttribPointer(index + 1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(1 * sizeof(glm::vec4)));
+	glEnableVertexAttribArray(index + 2);
+	glVertexAttribPointer(index + 2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(2 * sizeof(glm::vec4)));
+	glEnableVertexAttribArray(index + 3);
+	glVertexAttribPointer(index + 3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(3 * sizeof(glm::vec4)));
+
+	glVertexAttribDivisor(index, 1);
+	glVertexAttribDivisor(index + 1, 1);
+	glVertexAttribDivisor(index + 2, 1);
+	glVertexAttribDivisor(index + 3, 1);
+	VBO.Unbind();
+}
+
+void VAO::VecInstance(int index, VBO& VBO) {
+	Bind();
+	VBO.Bind();
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+
+	glVertexAttribDivisor(index, 1);
 	VBO.Unbind();
 }
 
@@ -53,17 +82,16 @@ void VAO::Delete()
 	glDeleteBuffers(1, &id);
 }
 
-VAO::VAO(VAO&& move) noexcept{
+VAO::VAO(VAO&& move) noexcept {
 	std::swap(id, move.id);
 }
 
-VAO& VAO::operator=(VAO&& other) noexcept{
+VAO& VAO::operator=(VAO&& other) noexcept {
 	std::swap(id, other.id);
 	return *this;
 }
 
 VAO::~VAO() {
-	if (id != -1) {
+	if (id != -1)
 		glDeleteVertexArrays(1, &id);
-	}
 }

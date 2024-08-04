@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CAMERA_CLASS_H
+#define CAMERA_CLASS_H
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -29,3 +30,5 @@ private:
 	float movement_speed, mouse_sensitivity, actual_speed;
 	glm::vec3 camera_position, camera_front, camera_up;
 };
+
+#endif

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef EBO_CLASS_H
 #define EBO_CLASS_H
 
@@ -52,7 +51,7 @@ public:
 private:
 	std::vector<Index> indices;
 
-	GLuint id = -1;
+	GLuint id = NULL;
 };
 
 #endif

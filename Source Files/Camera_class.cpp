@@ -1,7 +1,9 @@
 #include"Camera_class.h"
 
-Camera::Camera(glm::vec3 camera_position, glm::vec3 camera_front, glm::vec3 camera_up, float movement_speed, float mouse_sensitivity, float actual_speed)
-		: camera_position(camera_position), camera_front(camera_front), camera_up(camera_up), movement_speed(movement_speed), mouse_sensitivity(mouse_sensitivity), actual_speed(actual_speed){}
+Camera::Camera(glm::vec3 camera_position, glm::vec3 camera_front, glm::vec3 camera_up, 
+				float movement_speed, float mouse_sensitivity, float actual_speed)
+				: camera_position(camera_position), camera_front(camera_front), camera_up(camera_up), 
+				movement_speed(movement_speed), mouse_sensitivity(mouse_sensitivity), actual_speed(actual_speed){}
 
 // Moving through space
 void Camera::ProcessKeyPress(CameraMovement direction, float delta_time) {
@@ -17,6 +19,7 @@ void Camera::ProcessKeyPress(CameraMovement direction, float delta_time) {
 		camera_position += actual_speed * glm::normalize(glm::cross(camera_front, camera_up));
 }
 
+// Mouse movement
 void Camera::ProcessMouseMove(float x_offset, float y_offset) {
 	x_offset *= mouse_sensitivity;
 	y_offset *= mouse_sensitivity;
