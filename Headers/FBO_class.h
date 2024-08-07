@@ -31,7 +31,15 @@ public:
 
 	~Framebuffer();
 private:
-	GLuint framebuffer_id = NULL, renderbuffer_id = NULL;
+	GLuint renderbuffer_id = NULL;
+protected:
+	GLuint framebuffer_id = NULL;
+};
+
+class ShadowFramebuffer : public Framebuffer {
+public:
+	ShadowFramebuffer() = default;
+	ShadowFramebuffer(unsigned int width, unsigned int height, Texture& texture);
 };
 
 #endif

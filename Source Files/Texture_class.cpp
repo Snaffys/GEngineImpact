@@ -46,6 +46,20 @@ Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int
 
 
 
+Texture::Texture(const unsigned int shadow_width, const unsigned int shadow_height) {
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadow_width, shadow_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);	
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, id, 0);
+}
+
 
 Texture::Texture(const int rows, const int cols, const char* faces) {
 	glGenTextures(1, &id);
@@ -83,18 +97,18 @@ MultisampledTexture::MultisampledTexture(GLenum format, const unsigned int sampl
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, id, 0);
 }
 
-Texture::Texture(std::string path, const std::string& directory, std::string typeName, std::string filename, bool gamma) {
+Texture::Texture(std::string filename, const std::string directory, const char* typeName, bool gamma) {
 	this->type = typeName;
 	this->filename = filename;
 	// name of the file
-	std::string filenamey = std::string(path);
+	std::string path = std::string(filename);
 	// path to the file
-	filenamey = directory + "/textures/" + filenamey;
+	path = directory + "/textures/" + path;
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
 	int width, height, nrComponents;
 	// gets data about texture from file
-	unsigned char* data = stbi_load(filenamey.c_str(), &width, &height, &nrComponents, 0);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
 	if (data)
 	{
 		// chooses format
@@ -123,7 +137,7 @@ Texture::Texture(std::string path, const std::string& directory, std::string typ
 	}
 	else
 	{
-		printf("Texture failed to load at path: %s\n", path);
+		printf("Texture failed to load at path: %s\n", filename);
 		// frees data
 		stbi_image_free(data);
 	}

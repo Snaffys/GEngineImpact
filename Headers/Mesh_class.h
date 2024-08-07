@@ -19,15 +19,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-struct Texture_model {
-	unsigned int id;
-	std::string type;
-	std::string filename;	// for future checking if texture already loaded
-};
-
 class Mesh {
 	public:
-		Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, const std::vector<Texture> &textures, unsigned int instancing_amount, glm::mat4 models_pos[]);
+		Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, std::vector<Texture> &textures, unsigned int instancing_amount, glm::mat4 models_pos[]);
 
 		void Draw(Shader &shader);
 		void Draw(Shader& shader, unsigned int objects_amount);

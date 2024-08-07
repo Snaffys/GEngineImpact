@@ -22,11 +22,12 @@
 class Texture {
 public:
 	Texture() = default;
+
 	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL);
 	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum internal_format = NULL);
 
-	Texture(std::string path, const std::string& directory, std::string typeName, std::string filename, bool gamma = false);
-
+	Texture(std::string filename, const std::string directory, const char* typeName, bool gamma = false);
+	Texture(const unsigned int shadow_width, const unsigned int shadow_height);
 
 	//Texture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
 

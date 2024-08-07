@@ -33,6 +33,7 @@ public:
 
 	~Window();
 private:
+	const unsigned int shadow_width = 1024, shadow_height = 1024;
 	// Window's parameters
 	int width, height;
 	GLFWwindow* window;
@@ -66,6 +67,7 @@ private:
 	Texture cubemap_tex;
 	MultisampledTexture anti_aliasing_fbo_tex;
 	Texture post_proc_fbo_tex;
+	Texture shadow_fbo_tex;
 
 
 
@@ -89,6 +91,7 @@ private:
 	EBO ebo;
 	Framebuffer anti_aliasing_fbo;
 	Framebuffer post_proc_fbo;
+	ShadowFramebuffer shadow_fbo;
 
 	// Camera
 	Camera camera;

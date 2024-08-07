@@ -21,11 +21,9 @@ void Model::Draw(Shader& shader, unsigned int models_amount) {
 void Model::loadModel(std::filesystem::path path) {
 	Assimp::Importer importer;
 	// reads file and returns its contents
-	//const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals | aiProcessPreset_TargetRealtime_MaxQuality);	// aiProcess_Triangulate - if the model doesn't(entirely) consists of triangles transforms its primitive shapes to triangles
+	const aiScene *scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_GenNormals | aiProcessPreset_TargetRealtime_MaxQuality);	// aiProcess_Triangulate - if the model doesn't(entirely) consists of triangles transforms its primitive shapes to triangles
 																														// aiProcess_FlipUVs - flips the texture cooridinates on the y-axis where necessary
 																														// aiProcess_GenNormals - creates normal vectors for each vertex if the model doesn't contain normal vectors
-	//const aiScene* scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
-	const aiScene* scene = importer.ReadFile(path.string(), aiProcessPreset_TargetRealtime_MaxQuality);
 	// checks errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		printf("ERROR::ASSIMP::%s\n", importer.GetErrorString());
@@ -69,8 +67,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 			vertex.normals.y = mesh->mNormals[i].y;
 			vertex.normals.z = mesh->mNormals[i].z;
 		}
-		//else
-			//vertex.normals = glm::vec3(0.0f, 0.0f, 0.0f);
+		else
+			vertex.normals = glm::vec3(0.0f, 0.0f, 0.0f);
 		// gets texture coords
 		if (mesh->mTextureCoords[0]) {	// mesh can have no texture coordinates
 			vertex.tex_coords.x = mesh->mTextureCoords[0][i].x;	// model can has up to 8 differnt texture coordinates per vertex
@@ -95,35 +93,35 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	// gets diffuseMaps
 	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	// inserts diffuseMaps vector into the end of textures vector
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
 	// gets specularMaps
 	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 	// inserts specularMaps vector into the end of textures vector
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
 
 	return Mesh(vertices, indices, textures, instancing_amount, model_pos);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName) {
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, const char* typeName) {
 	std::vector<Texture> textures;
 	// looping through all textures with specific type in the material
 	for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
 		// name of the file
-		aiString string;
+		aiString material_path;
 
-		std::string str;
+		std::string filename;
 
 		// gets all textures parameters from the material
-		material->GetTexture(type, i, &string);		
-		str = std::filesystem::path(string.data).filename().string();
+		material->GetTexture(type, i, &material_path);
+		filename = std::filesystem::path(material_path.data).filename().string();
 
 		bool skip = false;
 		// loops through all loaded textures to check if the texture was already loaded
 		for (unsigned int j = 0; j < textures_loaded.size(); j++) {
 			// of texture was loaded
-			if (std::strcmp(textures_loaded[j].GetFilename().data(), str.c_str()) == 0) {
+			if (std::strcmp((*textures_loaded[j]).GetFilename().data(), filename.c_str()) == 0) {
 				// sends texture in the textures vector
-				textures.push_back(textures_loaded[j]);
+				textures.push_back(*textures_loaded[j]);
 				// skips texture loading
 				skip = true;
 				break;
@@ -131,131 +129,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
 		}
 		// if texture wasn't loaded
 		if (!skip) {
-			//Texture texture;
-			texture = { str, this->directory.string(), typeName, str };
-			// initializes texture fieds
-			//texture.SetId(TextureFromFile(str, this->directory.string()));
-			//texture.id = TextureFromFile(str, this->directory.string());
-			//texture.SetType(typeName);
-			//texture.type = typeName;
-			//texture.SetFilename(str);
-			//texture.filename = str;
-			// sends texture in the vectors
-			textures.push_back(texture);
-			textures_loaded.push_back(texture);
-
-			//glDeleteTextures(1, texture.GetId());
+			textures.emplace_back(filename, this->directory.string(), typeName);
+			textures_loaded.emplace_back(&textures.back());
 		}
 	}
 	return textures;
 }
-
-// generates texture and returnes its id
-unsigned int TextureFromFile(std::string path, const std::string& directory, bool gamma)
-{
-	// name of the file
-	std::string filename = std::string(path);
-	// path to the file
-	filename = directory + "/textures/" + filename;
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-	glActiveTexture(GL_TEXTURE0 + textureID - 1);
-	int width, height, nrComponents;
-	// gets data about texture from file
-	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-	if (data)
-	{
-		// chooses format
-		GLenum format;
-		if (nrComponents == 1)
-			format = GL_RED;
-		else if (nrComponents == 3)
-			format = GL_RGB;
-		else if (nrComponents == 4)
-			format = GL_RGBA;
-		// binds texture
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		// generates currently bounded texture
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		// generates mipmap
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		// texture stretching
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// texture filtering(blurred or pixeled)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// frees data
-		stbi_image_free(data);
-	}
-	else
-	{
-		printf("Texture failed to load at path: %s\n", path);
-		// frees data
-		stbi_image_free(data);
-	}
-
-	return textureID;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-//// generates texture and returnes its id
-//unsigned int TextureFromFile(std::string path, const std::string& directory, bool gamma)
-//{
-//	// name of the file
-//	std::string filename = std::string(path);
-//	// path to the file
-//	filename = directory + "/textures/" + filename;
-//	unsigned int textureID;
-//	glGenTextures(1, &textureID);
-//	glActiveTexture(GL_TEXTURE0 + textureID - 1);
-//	int width, height, nrComponents;
-//	// gets data about texture from file
-//	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
-//	if (data)
-//	{
-//		// chooses format
-//		GLenum format;
-//		if (nrComponents == 1)
-//			format = GL_RED;
-//		else if (nrComponents == 3)
-//			format = GL_RGB;
-//		else if (nrComponents == 4)
-//			format = GL_RGBA;
-//		// binds texture
-//		glBindTexture(GL_TEXTURE_2D, textureID);
-//		// generates currently bounded texture
-//		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-//		// generates mipmap
-//		glGenerateMipmap(GL_TEXTURE_2D);
-//
-//		// texture stretching
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//		// texture filtering(blurred or pixeled)
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//		// frees data
-//		stbi_image_free(data);
-//	}
-//	else
-//	{
-//		printf("Texture failed to load at path: %s\n", path);
-//		// frees data
-//		stbi_image_free(data);
-//	}
-//
-//	return textureID;
-//}

@@ -1,7 +1,7 @@
 #include "Mesh_class.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, unsigned int instancing_amount, glm::mat4 models_pos[])
-        : vertices(vertices), indices(indices), textures(textures){
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, std::vector<Texture>& textures, unsigned int instancing_amount, glm::mat4 models_pos[])
+        : vertices(vertices), indices(indices), textures(std::move(textures)){
     if (instancing_amount == 1)
         setupMesh();
     else
@@ -15,11 +15,7 @@ void Mesh::setupMesh() {
 
     vao.Unbind();
     ebo.Unbind();
-    
-    //glGenBuffers(1, &ebo_1);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_1);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-}
+ }
 
 void Mesh::setupMesh(unsigned int instancing_amount, glm::mat4 models_pos[]) {
     vbo = vertices;
@@ -35,8 +31,6 @@ void Mesh::setupMesh(unsigned int instancing_amount, glm::mat4 models_pos[]) {
 void Mesh::Draw(Shader& shader) {
     unsigned int diffuse_nr = 1;
     unsigned int specular_nr = 1;
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, 0);
     // sets textures
     for (unsigned int i = 0; i < textures.size(); i++) {
         char buff[100]{};
@@ -60,8 +54,6 @@ void Mesh::Draw(Shader& shader) {
     vao.Bind();
     glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     vao.Unbind();
-
-    //glActiveTexture(GL_TEXTURE0 + (textures[0].id - 1));
 }
 
 void Mesh::Draw(Shader& shader, unsigned int objects_amount) {

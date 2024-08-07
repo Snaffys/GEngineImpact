@@ -262,6 +262,8 @@ Window::Window(unsigned int width, unsigned int height) {
 	anti_aliasing_fbo = { width, height, samples, anti_aliasing_fbo_tex };
 	post_proc_fbo = { width, height, post_proc_fbo_tex };
 
+	shadow_fbo = { shadow_width, shadow_height, shadow_fbo_tex };
+
 
 	// model's path
 	loaded_model = { "objects/mushroom/model.fbx" };
