@@ -2,7 +2,7 @@
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, std::vector<Texture>& textures, unsigned int instancing_amount, glm::mat4 models_pos[])
         : vertices(vertices), indices(indices), textures(std::move(textures)){
-    if (instancing_amount == 1)
+    if (instancing_amount == 0)
         setupMesh();
     else
         setupMesh(instancing_amount, models_pos);
@@ -12,7 +12,7 @@ void Mesh::setupMesh() {
     vbo = vertices;
     vao = VAO(vbo);
     ebo = indices;
-
+    
     vao.Unbind();
     ebo.Unbind();
  }
@@ -20,10 +20,12 @@ void Mesh::setupMesh() {
 void Mesh::setupMesh(unsigned int instancing_amount, glm::mat4 models_pos[]) {
     vbo = vertices;
     vao = VAO(vbo);
+    //GLuint ad;
+    //glGenBuffers(1, &ad);
     vbo_storage = { models_pos, instancing_amount };
     vao.MatInstance(3, vbo_storage);
     ebo = indices;
-
+    
     vao.Unbind();
     ebo.Unbind();
 }

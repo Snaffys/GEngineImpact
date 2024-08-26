@@ -1,11 +1,10 @@
 #version 330 core
 
-in vec3 normal;         // gets normal from vertex shader
-in vec3 frag_pos;
-in vec3 light_p;
-
-uniform sampler2D texture1;
-uniform sampler2D texture2;
+in VS_OUT{
+    vec3 normal;         // gets normal from vertex shader
+    vec3 frag_pos;
+    vec3 light_p;
+} fs_in;
 
 uniform vec3 object_color;
 uniform vec3 light_color;
@@ -19,14 +18,14 @@ void main()
     vec3 ambient = ambient_strength * light_color;
 
     // diffuse lightning
-    vec3 norm = normalize(normal);    
-    vec3 light_direction = normalize(light_p - frag_pos);
+    vec3 norm = normalize(fs_in.normal);    
+    vec3 light_direction = normalize(fs_in.light_p - fs_in.frag_pos);
 	float diff = max(dot(norm,light_direction), 0.0);
 	vec3 diffuse = diff * light_color;
 
     // specular lightning
     float specular_strength = 1.5;
-    vec3 view_direction = normalize(-frag_pos);
+    vec3 view_direction = normalize(-fs_in.frag_pos);
     vec3 reflect_direction = reflect(-light_direction, norm);   // "-" because light_direction points from the fragment's position
     float spec = pow(max(dot(view_direction, reflect_direction), 0.0), 64);
     vec3 specular = specular_strength * spec * light_color;

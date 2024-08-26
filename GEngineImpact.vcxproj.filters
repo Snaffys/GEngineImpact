@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\textures">
       <UniqueIdentifier>{94d7c919-599e-4e7e-a60c-9a480c8d6803}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\geometry">
+      <UniqueIdentifier>{6716f483-89a1-4069-9d91-c58c2570d867}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\FBO_class.h">
@@ -57,6 +60,9 @@
     <ClInclude Include="Headers\EBO_class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\UBO_class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\fragment\lighting.frag">
@@ -74,7 +80,7 @@
     <None Include="Shaders\fragment\u_color.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
-    <None Include="Shaders\fragment\u_position.frag">
+    <None Include="Shaders\fragment\shadow_discard.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
     <None Include="Shaders\fragment\view_space_phong.frag">
@@ -95,7 +101,7 @@
     <None Include="Shaders\vertex\u_color.vert">
       <Filter>Resource Files\Shaders\vertex</Filter>
     </None>
-    <None Include="Shaders\vertex\u_position.vert">
+    <None Include="Shaders\vertex\shadow_blending.vert">
       <Filter>Resource Files\Shaders\vertex</Filter>
     </None>
     <None Include="Shaders\vertex\view_space_phong.vert">
@@ -130,6 +136,27 @@
     </None>
     <None Include="Shaders\fragment\cubes_instancing.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\framebuffer_shadow.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\framebuffer_shadow.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\shadow_objects.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\lighting.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\no_material.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\discard.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\geometry\test.geom">
+      <Filter>Resource Files\Shaders\geometry</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -226,5 +253,8 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source Files\test.cpp" />
+    <ClCompile Include="Source Files\UBO_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

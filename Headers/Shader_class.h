@@ -24,6 +24,7 @@ class Shader {
 public:
 	Shader() = default;
 	Shader(const char* vertex_file, const char* fragment_file);
+	Shader(const char* vertex_file, const char* fragment_file, const char* geometry_file);
 
 	Shader(Shader&& move) noexcept;
 	Shader& operator=(Shader&& other) noexcept;
@@ -44,6 +45,8 @@ public:
 
 	void setMat4(const GLchar* name, const glm::mat4& mat);
 
+	unsigned int GetID();
+
 	~Shader();
 private:
 	char* get_file_contents(const char* filename);
@@ -53,7 +56,7 @@ private:
 
 	int compile_shader(GLuint type, const char* filename);
 
-	GLuint vertex_shader = NULL, fragment_shader = NULL, id = NULL;
+	GLuint vertex_shader = NULL, fragment_shader = NULL, geometry_shader = NULL, id = NULL;
 };
 
 #endif

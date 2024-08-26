@@ -26,6 +26,9 @@ public:
 	void UnbindRenderbuffer();
 	void DeleteRenderbuffer();
 
+	GLuint GetRenderbufferId();
+	GLuint GetFramebufferId();
+
 	Framebuffer(Framebuffer&& move) noexcept;
 	Framebuffer& operator=(Framebuffer&& other) noexcept;
 

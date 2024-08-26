@@ -13,7 +13,7 @@
 class Model {
 	public:
 		Model() = default;
-		Model(const char* path, glm::mat4 models_pos[] = {}, unsigned int instansing_amount = 1);
+		Model(const char* path, glm::mat4 models_pos[] = {}, unsigned int instansing_amount = 0);
 		void Draw(Shader& shader);
 		void Draw(Shader& shader, unsigned int models_amount);
 	private:

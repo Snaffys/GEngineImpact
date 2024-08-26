@@ -8,13 +8,13 @@
 #include <iostream>
 #include <assert.h>
 
-//#include "Texture_class.h"
 #include "Camera_class.h"
 #include "Model_class.h"
 
 #include <unordered_map>
 #include <map>
 #include "FBO_class.h"
+#include "UBO_class.h"
 
 class Window;
 
@@ -22,7 +22,7 @@ extern std::unordered_map<GLFWwindow*, Window*> window_state_map;
 
 class Window {
 public:
-	Window(unsigned int width = 2400, unsigned int height = 1269);
+	Window(unsigned int width = 1900, unsigned int height = 1284);
 
 	// Callbacks
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -33,13 +33,24 @@ public:
 
 	~Window();
 private:
-	const unsigned int shadow_width = 1024, shadow_height = 1024;
+	const unsigned int samples = 6;
+
+	float near_plane_camera = 0.1f;
+	float far_plane_camera = 100.0f;
+
+	unsigned int shadow_size = 5048;
+	float near_plane_shadow = 0.1f;
+	float far_plane_shadow = 100.0f;
+
+	unsigned int cubemap_shadow_size = 2048;
+	float near_plane_cubamap_shadow = 0.1f;
+	float far_plane_cubemap_shadow = 100.0f;
+
 	// Window's parameters
 	int width, height;
 	GLFWwindow* window;
 
 	// Shaders
-	Shader model_shader;
 	Shader lighting_shader;
 	Shader stencil_shader;
 	Shader no_material_shader;
@@ -49,13 +60,19 @@ private:
 	Shader cubemap_reflection_shader;
 	Shader instancing_shader;
 	Shader object_shader;
+	Shader shadow_shader;
+	Shader shadow_objects;
+	Shader discard_shadow;
+	Shader geom_test;
+	
+
+	unsigned int ubo_matrices;
+
 
 	// Flashlight
 	bool flashlight;
 
 	// Textures
-	//Texture texture_1;
-	//Texture texture_2;
 	Texture diffuse_map;
 	Texture specular_map;
 	Texture grass_tex;
@@ -65,9 +82,10 @@ private:
 	Model reflected_model;
 
 	Texture cubemap_tex;
+	Texture cubemap_shadow_tex;
 	MultisampledTexture anti_aliasing_fbo_tex;
 	Texture post_proc_fbo_tex;
-	Texture shadow_fbo_tex;
+	CubemapShadowTexture shadow_fbo_tex;
 
 
 
@@ -76,6 +94,7 @@ private:
 	VAO vao_light;
 	VAO grass_transparent_vao;
 	VAO windows_transparent_vao;
+	FramebufferVAO geom_vao;
 	FramebufferVAO framebuffer_vao;
 	CubemapVAO cubemap_vao;
 	VBO vbo;
@@ -88,17 +107,21 @@ private:
 	VBO grass_pos_storage;
 	VBO windows_pos_storage;
 	VBO models_pos_storage;
+	VBO geom_vbo;
 	EBO ebo;
 	Framebuffer anti_aliasing_fbo;
 	Framebuffer post_proc_fbo;
 	ShadowFramebuffer shadow_fbo;
+	ShadowFramebuffer cubemap_shadow_fbo;
+	UniformBuffer pos_matrix_ubo;
+	UniformBuffer light_matrix_ubo;
 
 	// Camera
 	Camera camera;
 	float delta_time;
 	float last_frame;
 	float last_x, last_y;
-	float fov;
+	float camera_fov;
 	bool first_mouse;
 
 	// Light settings
@@ -122,7 +145,11 @@ private:
 	// Sets projection and view matrices
 	void set_coord_systems(Shader& shader, glm::mat4 proj, glm::mat4 view);
 
-	glm::mat4 get_projection();
+	glm::mat4 get_projection_perspective(float pov, float aspect, float near_plane, float far_plane);
+
+	glm::mat4 get_projection_ortho(float near_plane, float far_plane);
+
+	void bind_uniform_block(unsigned int shader_id[], const unsigned int arr_size, const char* uniform_block, unsigned int binding_point);
 
 	void processInput(GLFWwindow* window);
 };

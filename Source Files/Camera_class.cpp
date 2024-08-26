@@ -42,10 +42,10 @@ void Camera::ProcessMouseMove(float x_offset, float y_offset) {
 	camera_front = glm::normalize(direction);
 
 	// For FPS camera
-	/*direction.x = cos(glm::radians(yaw)) * std::abs(sin(glm::radians(pitch)));
-	direction.y = 0.0f;
-	direction.z = sin(glm::radians(yaw)) * std::abs(sin(glm::radians(pitch)));
-	camera_front_move = glm::normalize(direction);*/
+	//direction.x = cos(glm::radians(yaw)) * std::abs(sin(glm::radians(pitch)));
+	//direction.y = 0.0f;
+	//direction.z = sin(glm::radians(yaw)) * std::abs(sin(glm::radians(pitch)));
+	//camera_front = glm::normalize(direction);
 }
 
 glm::vec3 Camera::GetCameraPosition() {

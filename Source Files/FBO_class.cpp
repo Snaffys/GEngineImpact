@@ -5,7 +5,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture& textu
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	// Allocates memory for renderbuffer
-	texture = { GL_RGB, width, height };
+	texture = { GL_RGB, width, height, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 };
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
@@ -39,7 +39,7 @@ ShadowFramebuffer::ShadowFramebuffer(unsigned int width, unsigned int height, Te
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	// Allocates memory for renderbuffer
-	texture = {width, height };
+	texture = { GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_DEPTH_ATTACHMENT };
 
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
@@ -48,6 +48,14 @@ ShadowFramebuffer::ShadowFramebuffer(unsigned int width, unsigned int height, Te
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
 
 	UnbindFramebuffer();
+}
+
+GLuint Framebuffer::GetRenderbufferId() {
+	return renderbuffer_id;
+}
+
+GLuint Framebuffer::GetFramebufferId() {
+	return framebuffer_id;
 }
 
 // Binds framebuffers

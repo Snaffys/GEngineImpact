@@ -30,18 +30,23 @@ Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum i
 	stbi_image_free(data);
 }
 
-Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum internal_format) {
+Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
 	if (internal_format == NULL)
 		internal_format = format;
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
 	Bind();
-	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, img_width, img_height, 0, format, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, img_width, img_height, 0, format, type, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id, 0);
+	float borderColor[] = { 1.0f,1.0f,1.0f,1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D, id, 0);
 }
 
 
@@ -69,7 +74,6 @@ Texture::Texture(const int rows, const int cols, const char* faces) {
 	int width, height, nrChannels;
 	for (unsigned int i = 0; i < rows; i++)
 	{
-
 		data = stbi_load((char*)(faces + i * (cols)), &width, &height, &nrChannels, 0);
 		if (data)
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
@@ -84,6 +88,23 @@ Texture::Texture(const int rows, const int cols, const char* faces) {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	stbi_set_flip_vertically_on_load(true);
+}
+
+CubemapShadowTexture::CubemapShadowTexture(GLenum format, unsigned int width, unsigned int height,GLenum type, GLenum textarget) {
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
+
+	for (unsigned int i = 0; i < 6; i++) 
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, type, NULL);
+	
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, textarget, id, 0);
 }
 
 

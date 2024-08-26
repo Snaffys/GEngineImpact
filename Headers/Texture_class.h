@@ -24,7 +24,7 @@ public:
 	Texture() = default;
 
 	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL);
-	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum internal_format = NULL);
+	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format = NULL);
 
 	Texture(std::string filename, const std::string directory, const char* typeName, bool gamma = false);
 	Texture(const unsigned int shadow_width, const unsigned int shadow_height);
@@ -76,6 +76,13 @@ class MultisampledTexture : public Texture {
 public:
 	MultisampledTexture() = default;
 	MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
+};
+
+
+class CubemapShadowTexture : public Texture {
+public:
+	CubemapShadowTexture() = default;
+	CubemapShadowTexture(GLenum format, unsigned int width, unsigned int height, GLenum type, GLenum textarget);
 };
 
 #endif
