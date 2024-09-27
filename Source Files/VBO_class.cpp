@@ -10,6 +10,12 @@ VBO::VBO(std::initializer_list<Vertex> coords) : vertices(coords) {
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 }
 
+VBO::VBO(std::initializer_list<VertexTan> coords) : vertices_normals(coords) {
+	glGenBuffers(1, &id);
+	Bind();
+	glBufferData(GL_ARRAY_BUFFER, vertices_normals.size() * sizeof(VertexTan), &vertices_normals[0], GL_STATIC_DRAW);
+}
+
 VBO::VBO(std::initializer_list<VertexFramebuffer> coords) : vertices_fb(coords) {
 	glGenBuffers(1, &id);
 	Bind();
@@ -26,6 +32,12 @@ VBO::VBO(const std::vector<Vertex>& input_vertices) {
 	glGenBuffers(1, &id);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, input_vertices.size() * sizeof(Vertex), &input_vertices[0], GL_STATIC_DRAW);
+}
+
+VBO::VBO(const std::vector<VertexTan>& input_vertices) {
+	glGenBuffers(1, &id);
+	Bind();
+	glBufferData(GL_ARRAY_BUFFER, input_vertices.size() * sizeof(VertexTan), &input_vertices[0], GL_STATIC_DRAW);
 }
 
 VBO::VBO(const glm::mat4 model_matrices[], unsigned int amount) {
@@ -53,6 +65,7 @@ void VBO::Unbind() {
 // Delete buffers
 void VBO::Delete()
 {
+	Unbind();
 	glDeleteBuffers(1, &id);
 }
 

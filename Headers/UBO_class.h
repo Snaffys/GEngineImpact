@@ -16,7 +16,11 @@ public:
 	void Bind();
 	void Unbind();
 
-	void SubData(const unsigned int position, const unsigned int size, glm::mat4* value);
+	template <typename T> inline void SubData(const unsigned int position, const unsigned int size, T* value) {
+		Bind();
+		glBufferSubData(GL_UNIFORM_BUFFER, position, size, value);
+		Unbind();
+	};
 
 	unsigned int GetId();
 
@@ -24,7 +28,7 @@ public:
 	UniformBuffer& operator=(UniformBuffer&& other) noexcept;
 
 	~UniformBuffer();
-//private:
+private:
 	GLuint ubo_id = NULL;
 };
 

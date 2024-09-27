@@ -137,6 +137,10 @@ void Shader::setMat4(const GLchar* name, const glm::mat4& mat) {
 	glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, &mat[0][0]);
 }
 
+void Shader::setBool(const GLchar* name, bool value) {
+	glUniform1i(glGetUniformLocation(id, name), value);
+}
+
 void Shader::Delete() {
 	glDeleteProgram(id);
 }

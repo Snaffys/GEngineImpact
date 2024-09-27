@@ -158,6 +158,51 @@
     <None Include="Shaders\geometry\test.geom">
       <Filter>Resource Files\Shaders\geometry</Filter>
     </None>
+    <None Include="Shaders\fragment\normal_visualizing.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\geometry\normal_visualizing.geom">
+      <Filter>Resource Files\Shaders\geometry</Filter>
+    </None>
+    <None Include="Shaders\vertex\normal_visualizing.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\point_shadow_objects.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\geometry\point_shadow_objects.geom">
+      <Filter>Resource Files\Shaders\geometry</Filter>
+    </None>
+    <None Include="Shaders\fragment\point_shadow_objects.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\point_shadow_blending.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\geometry\shadow_blending.geom">
+      <Filter>Resource Files\Shaders\geometry</Filter>
+    </None>
+    <None Include="Shaders\fragment\point_shadow_discard.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\normal_map.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\normal_map.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\normal_map_shadow.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\point_normal_map_shadow.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\gaussian_blur.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\gaussian_blur.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\spiderman.png">

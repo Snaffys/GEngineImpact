@@ -11,7 +11,9 @@ class Framebuffer {
 public:
 	Framebuffer() = default;
 	Framebuffer(unsigned int width, unsigned int height, Texture& texture);
-	Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture &texture);
+	Framebuffer(unsigned int width, unsigned int height, ShadowTexture& texture);
+	Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture* textures[], int textures_amount);
+	Framebuffer(unsigned int width, unsigned int height, Texture* texture[], int textures_amount);
 
 	void BindFramebuffer();
 	void UnbindFramebuffer();
@@ -42,7 +44,22 @@ protected:
 class ShadowFramebuffer : public Framebuffer {
 public:
 	ShadowFramebuffer() = default;
-	ShadowFramebuffer(unsigned int width, unsigned int height, Texture& texture);
+
+	template <typename T> inline ShadowFramebuffer(unsigned int width, unsigned int height, T& texture) {
+		// Generates and binds framebuffers
+		glGenFramebuffers(1, &framebuffer_id);
+		BindFramebuffer();
+		// Allocates memory for renderbuffer
+		texture = { GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_DEPTH_ATTACHMENT };
+
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
+
+		UnbindFramebuffer();
+	}
 };
 
 #endif

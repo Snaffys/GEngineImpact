@@ -5,7 +5,8 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture& textu
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	// Allocates memory for renderbuffer
-	texture = { GL_RGB, width, height, GL_UNSIGNED_BYTE, GL_COLOR_ATTACHMENT0 };
+
+	texture = { GL_RGBA, width, height, GL_FLOAT, GL_COLOR_ATTACHMENT0, GL_RGBA16F };
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
@@ -13,12 +14,38 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture& textu
 	UnbindFramebuffer();
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture& texture){
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture* texture[], int textures_amount) {
 	// Generates and binds framebuffers
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	// Allocates memory for renderbuffer
-	texture = { GL_RGB, samples_amount, width, height };
+
+	for (unsigned int i = 0; i < textures_amount; i++)
+		*texture[i] = {GL_RGBA, width, height, GL_FLOAT, GL_COLOR_ATTACHMENT0 + i, GL_RGBA16F};
+
+	glGenRenderbuffers(1, &renderbuffer_id);
+	BindRenderbuffer();
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer_id);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
+
+	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
+	UnbindFramebuffer();
+}
+
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture* textures[], int textures_amount) {
+	// Generates and binds framebuffers
+	glGenFramebuffers(1, &framebuffer_id);
+	BindFramebuffer();
+	
+	for (unsigned int i = 0; i < textures_amount; i++) {
+		// Allocates memory for renderbuffer
+		*textures[i] = {GL_RGBA16F, samples_amount, width, height, GL_COLOR_ATTACHMENT0 + i};
+	}
+	
 	// Generates renderbuffer
 	glGenRenderbuffers(1, &renderbuffer_id);
 	BindRenderbuffer();
@@ -31,24 +58,42 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const unsigned
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
 
-	UnbindFramebuffer();
-}
-
-ShadowFramebuffer::ShadowFramebuffer(unsigned int width, unsigned int height, Texture& texture) {
-	// Generates and binds framebuffers
-	glGenFramebuffers(1, &framebuffer_id);
-	BindFramebuffer();
-	// Allocates memory for renderbuffer
-	texture = { GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_DEPTH_ATTACHMENT };
-
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
+	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 
 	UnbindFramebuffer();
 }
+
+
+
+
+
+
+//Framebuffer::Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture texture, int textures_amount) {
+//	// Generates and binds framebuffers
+//	glGenFramebuffers(1, &framebuffer_id);
+//	BindFramebuffer();
+//
+//	for (unsigned int i = 0; i < textures_amount; i++) {
+//		// Allocates memory for renderbuffer
+//		texture = { GL_RGBA16F, samples_amount, width, height };
+//	}
+//
+//	// Generates renderbuffer
+//	glGenRenderbuffers(1, &renderbuffer_id);
+//	BindRenderbuffer();
+//	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+//	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples_amount, GL_DEPTH24_STENCIL8, width, height);
+//	UnbindRenderbuffer();
+//	// Attaches renderbuffer object to the depth and stencil attachment of the framebuffer
+//	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer_id);
+//
+//	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+//		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
+//
+//	UnbindFramebuffer();
+//}
+
 
 GLuint Framebuffer::GetRenderbufferId() {
 	return renderbuffer_id;

@@ -10,12 +10,8 @@ out VS_OUT{
     vec2 tex_coords;
 } vs_out;
 
-layout (std140) uniform light_matrix{
-    mat4 light_space_matrix_directional;
-};
-
 void main()
 {
-    gl_Position = light_space_matrix_directional * instanceMatrix * vec4(a_pos, 1.0);
+    gl_Position = instanceMatrix * vec4(a_pos, 1.0);
     vs_out.tex_coords = a_tex_coord;
 } 

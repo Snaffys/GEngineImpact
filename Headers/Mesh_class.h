@@ -21,13 +21,13 @@
 
 class Mesh {
 	public:
-		Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, std::vector<Texture> &textures, unsigned int instancing_amount, glm::mat4 models_pos[]);
+		Mesh(const std::vector<VertexTan> &vertices, const std::vector<unsigned int> &indices, std::vector<Texture> &textures, unsigned int instancing_amount, glm::mat4 models_pos[]);
 
 		void Draw(Shader &shader);
 		void Draw(Shader& shader, unsigned int objects_amount);
 
 	private:
-		std::vector<Vertex> vertices;
+		std::vector<VertexTan> vertices;
 		std::vector<unsigned int> indices;
 		std::vector<Texture> textures;
 
@@ -35,7 +35,7 @@ class Mesh {
 
 		void setupMesh(unsigned int instancing_amount, glm::mat4 models_pos[]);
 
-		VAO vao;
+		NormalVAO vao;
 		VBO vbo;
 		VBO vbo_storage;
 		EBO ebo;

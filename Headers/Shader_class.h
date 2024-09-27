@@ -45,6 +45,8 @@ public:
 
 	void setMat4(const GLchar* name, const glm::mat4& mat);
 
+	void setBool(const GLchar* name, bool value);
+
 	unsigned int GetID();
 
 	~Shader();

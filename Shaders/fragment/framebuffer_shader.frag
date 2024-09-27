@@ -6,21 +6,28 @@ in VS_OUT{
 } fs_in;
 
 uniform sampler2D screen_texture;
+uniform sampler2D bloom_blur;
+uniform float exposure;
 
 const float offset = 1.0/900.0;
 
 void main(){
 	float gamma = 2.2;
     // Default output
-	frag_color = texture(screen_texture, fs_in.tex_coords);
+    vec3 hdr_color = texture(screen_texture, fs_in.tex_coords).rgb;
+    vec3 bloom_color = texture(bloom_blur, fs_in.tex_coords).rgb;
+    hdr_color += bloom_color;
+    vec3 mapped = vec3(1.0f) - exp(-hdr_color * exposure);
+    mapped = pow(mapped, vec3(1.0f/gamma));
+    
+    
 
 	//// Inversion
-	//frag_color = vec4(vec3(1.0 - texture(screen_texture, fs_in.tex_coords)), 1.0);
+	//mapped = vec3(1.0 - mapped);
 
 	//// Grayscale
-	//frag_color = texture(screen_texture, fs_in.tex_coords);
-    //float average = 0.2126 * frag_color.r + 0.7152 * frag_color.g + 0.0722 * frag_color.b;
-    //frag_color = vec4(average, average, average, 1.0);
+    //float average = 0.2126 * mapped.r + 0.7152 * mapped.g + 0.0722 * mapped.b;
+    //mapped = vec3(average, average, average);
     
     //// Kernel
     //vec2 offsets[9] = vec2[](
@@ -48,15 +55,11 @@ void main(){
     
     //vec3 sampleTex[9];
     //for(int i = 0; i < 9; i++)
-    //    sampleTex[i] = vec3(texture(screen_texture, fs_in.tex_coords.st + offsets[i]));
-    //vec3 col = vec3(0.0);
+    //    sampleTex[i] = texture(screen_texture, fs_in.tex_coords.st + offsets[i]).rgb;
     //for(int i = 0; i < 9; i++)
-    //    col += sampleTex[i] * kernel[i];
-    //
-    //frag_color = vec4(col, 1.0);
-    //}
+    //    mapped += sampleTex[i] * kernel[i];
 
-	frag_color.rgb = pow(frag_color.rgb, vec3(1.0 / gamma));
+	frag_color = vec4(mapped, 1.0f);
 }
 
 

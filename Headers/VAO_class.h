@@ -39,4 +39,10 @@ public:
 	FramebufferVAO(VBO& VBO);
 };
 
+class NormalVAO : public VAO {
+public:
+	NormalVAO() = default;
+	NormalVAO(VBO& VBO);
+};
+
 #endif

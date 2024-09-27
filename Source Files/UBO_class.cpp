@@ -16,11 +16,11 @@ void UniformBuffer::Unbind() {
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void UniformBuffer::SubData(const unsigned int position, const unsigned int size, glm::mat4* value) {
-	Bind();
-	glBufferSubData(GL_UNIFORM_BUFFER, position, size, value);
-	Unbind();
-}
+//template <typename T> void UniformBuffer::SubData(const unsigned int position, const unsigned int size, T* value) {
+//	Bind();
+//	glBufferSubData(GL_UNIFORM_BUFFER, position, size, value);
+//	Unbind();
+//}
 
 unsigned int UniformBuffer::GetId() {
 	return ubo_id - 1;

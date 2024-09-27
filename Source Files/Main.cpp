@@ -9,7 +9,7 @@ int main()
     Application application;
     
     Window window;
-
+    
     window.Go();
     
     return 0;

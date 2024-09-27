@@ -8,6 +8,7 @@ in VS_OUT{
 	vec3 normal;
 	vec3 frag_pos;
 	vec4 frag_pos_light;
+    vec4 frag_pos_light_spot;
 } gs_in[];
 
 out GS_OUT{
@@ -15,37 +16,40 @@ out GS_OUT{
     vec3 normal;
 	vec3 frag_pos;
 	vec4 frag_pos_light;
+	vec4 frag_pos_light_spot;
 } gs_out;
 
-uniform float time;
+//uniform float time;
 
 vec4 Explode(vec4 position, vec3 normal);
 vec3 GetNormal();
 
 
 void main() {   
-    vec3 normal = GetNormal();
-    //gl_Position = gl_in[0].gl_Position;
-    gl_Position = Explode(gl_in[0].gl_Position, normal);
+    //vec3 normal = GetNormal();
+    gl_Position = gl_in[0].gl_Position;
+    //gl_Position = Explode(gl_in[0].gl_Position, normal);
     gs_out.tex_coords       = gs_in[0].tex_coords;
     gs_out.normal           = gs_in[0].normal;
     gs_out.frag_pos         = gs_in[0].frag_pos;
     gs_out.frag_pos_light   = gs_in[0].frag_pos_light;
-
+    gs_out.frag_pos_light_spot   = gs_in[0].frag_pos_light_spot;
     EmitVertex();
-    //gl_Position = gl_in[1].gl_Position;
-    gl_Position = Explode(gl_in[1].gl_Position, normal);
+    gl_Position = gl_in[1].gl_Position;
+    //gl_Position = Explode(gl_in[1].gl_Position, normal);
     gs_out.tex_coords       = gs_in[1].tex_coords;
     gs_out.normal           = gs_in[1].normal;
     gs_out.frag_pos         = gs_in[1].frag_pos;
     gs_out.frag_pos_light   = gs_in[1].frag_pos_light;
+    gs_out.frag_pos_light_spot   = gs_in[1].frag_pos_light_spot;
     EmitVertex();
-    //gl_Position = gl_in[2].gl_Position;
-    gl_Position = Explode(gl_in[2].gl_Position, normal);
+    gl_Position = gl_in[2].gl_Position;
+    //gl_Position = Explode(gl_in[2].gl_Position, normal);
     gs_out.tex_coords       = gs_in[2].tex_coords;
     gs_out.normal           = gs_in[2].normal;
     gs_out.frag_pos         = gs_in[2].frag_pos;
     gs_out.frag_pos_light   = gs_in[2].frag_pos_light;
+    gs_out.frag_pos_light_spot   = gs_in[2].frag_pos_light_spot;
     EmitVertex();
     EndPrimitive();
 }
@@ -60,6 +64,7 @@ vec3 GetNormal()
 
 vec4 Explode(vec4 position, vec3 normal)
 {
+    float time = 0.0f;
     float magnitude = 0.5;
     vec3 direction = normal * ((sin(time) + 1.0) / 2.0) * magnitude; 
     return position + vec4(direction, 0.0);

@@ -1,6 +1,6 @@
 #include "Texture_class.h"
 
-Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format) {
+Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format, bool flip) {
 	if (internal_format == NULL)
 		internal_format = format;
 	// Generates textures names, activates and binds textures
@@ -14,10 +14,10 @@ Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum i
 
 	// Texture filtering(blurred or pixeled)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);	// zoomed out so far
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	// zoomed in so close
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// zoomed in so close
 
 	// Texture flip
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(flip);
 	// Gets data about texture from file
 	data = stbi_load(image, &img_width, &img_height, &num_col_chan, 0);
 	// Checks for errors
@@ -28,9 +28,27 @@ Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum i
 	glGenerateMipmap(GL_TEXTURE_2D);
 	// Frees data
 	stbi_image_free(data);
+	stbi_set_flip_vertically_on_load(false);
 }
 
 Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
+	if (internal_format == NULL)
+		internal_format = format;
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, img_width, img_height, 0, format, type, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D, id, 0);
+}
+
+
+ShadowTexture::ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
 	if (internal_format == NULL)
 		internal_format = format;
 	glGenTextures(1, &id);
@@ -107,17 +125,17 @@ CubemapShadowTexture::CubemapShadowTexture(GLenum format, unsigned int width, un
 	glFramebufferTexture(GL_FRAMEBUFFER, textarget, id, 0);
 }
 
-
-MultisampledTexture::MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height) {
+MultisampledTexture::MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height, GLenum textarget) {
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
 	BindMultisample();
 	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples_amount, format, img_width, img_height, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, id, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D_MULTISAMPLE, id, 0);
 }
 
+// Models textures
 Texture::Texture(std::string filename, const std::string directory, const char* typeName, bool gamma) {
 	this->type = typeName;
 	this->filename = filename;

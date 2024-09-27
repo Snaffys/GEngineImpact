@@ -23,18 +23,17 @@ class Texture {
 public:
 	Texture() = default;
 
-	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL);
+	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL, bool flip = true);
 	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format = NULL);
 
 	Texture(std::string filename, const std::string directory, const char* typeName, bool gamma = false);
 	Texture(const unsigned int shadow_width, const unsigned int shadow_height);
 
+	Texture(const int rows, const int cols, const char* faces);
+
 	//Texture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
 
 	//Texture(const char* image, const char* tex_type, GLuint slot, GLenum format, GLenum pixel_type);
-
-
-	Texture(const int rows, const int cols, const char* faces);
 
 
 	Texture(const Texture&) = default;
@@ -75,7 +74,13 @@ protected:
 class MultisampledTexture : public Texture {
 public:
 	MultisampledTexture() = default;
-	MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
+	MultisampledTexture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height, GLenum textarget);
+};
+
+class ShadowTexture : public Texture{
+public:
+	ShadowTexture() = default;
+	ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format = NULL); 
 };
 
 

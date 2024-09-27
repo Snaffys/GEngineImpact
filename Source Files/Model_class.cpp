@@ -21,7 +21,7 @@ void Model::Draw(Shader& shader, unsigned int models_amount) {
 void Model::loadModel(std::filesystem::path path) {
 	Assimp::Importer importer;
 	// reads file and returns its contents
-	const aiScene *scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_GenNormals | aiProcessPreset_TargetRealtime_MaxQuality);	// aiProcess_Triangulate - if the model doesn't(entirely) consists of triangles transforms its primitive shapes to triangles
+	const aiScene *scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_GenNormals | aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_CalcTangentSpace | aiProcess_FlipUVs);	// aiProcess_Triangulate - if the model doesn't(entirely) consists of triangles transforms its primitive shapes to triangles
 																														// aiProcess_FlipUVs - flips the texture cooridinates on the y-axis where necessary
 																														// aiProcess_GenNormals - creates normal vectors for each vertex if the model doesn't contain normal vectors
 	// checks errors
@@ -51,12 +51,12 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	// mesh data
-	std::vector<Vertex> vertices;
+	std::vector<VertexTan> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<Texture> textures;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-		Vertex vertex;
+		VertexTan vertex;
 		// gets position
 		vertex.pos.x = mesh->mVertices[i].x;
 		vertex.pos.y = mesh->mVertices[i].y;
@@ -71,11 +71,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 			vertex.normals = glm::vec3(0.0f, 0.0f, 0.0f);
 		// gets texture coords
 		if (mesh->mTextureCoords[0]) {	// mesh can have no texture coordinates
-			vertex.tex_coords.x = mesh->mTextureCoords[0][i].x;	// model can has up to 8 differnt texture coordinates per vertex
+			vertex.tex_coords.x = mesh->mTextureCoords[0][i].x;	// model can have up to 8 different texture coordinates per vertex
 			vertex.tex_coords.y = mesh->mTextureCoords[0][i].y;
 		}
 		else
 			vertex.tex_coords = glm::vec2(0.0f, 0.0f);
+		if (mesh->HasTangentsAndBitangents()) {
+			vertex.tangents.x = mesh->mTangents[i].x;
+			vertex.tangents.y = mesh->mTangents[i].y;
+			vertex.tangents.z = mesh->mTangents[i].z;
+			vertex.bitangents.x = mesh->mBitangents[i].x;
+			vertex.bitangents.y = mesh->mBitangents[i].y;
+			vertex.bitangents.z = mesh->mBitangents[i].z;
+		}
 		// send the vertices in the vector
 		vertices.push_back(vertex);
 	}
@@ -90,14 +98,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	// processes material
 	// gets mesh's material index from scene that stores an array of texture loacations for each texture type
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	// gets diffuseMaps
+
 	std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	// inserts diffuseMaps vector into the end of textures vector
 	textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
-	// gets specularMaps
+
 	std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-	// inserts specularMaps vector into the end of textures vector
 	textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
+
+	std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "normal_map");
+	textures.insert(textures.end(), std::make_move_iterator(normalMaps.begin()), std::make_move_iterator(normalMaps.end()));
+
+	std::vector<Texture> displacementlMaps = loadMaterialTextures(material, aiTextureType_DISPLACEMENT, "displacement_map");
+	textures.insert(textures.end(), std::make_move_iterator(displacementlMaps.begin()), std::make_move_iterator(displacementlMaps.end()));
 
 	return Mesh(vertices, indices, textures, instancing_amount, model_pos);
 }

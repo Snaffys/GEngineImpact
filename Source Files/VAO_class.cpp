@@ -19,6 +19,31 @@ VAO::VAO(VBO& VBO) {
 	VBO.Unbind();
 }
 
+NormalVAO::NormalVAO(VBO& VBO) {
+	// Generates and binds vertex arrays
+	glGenVertexArrays(1, &id);
+	Bind();
+	// Binds VBO
+	VBO.Bind();
+
+	// Vertex
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, sizeof(std::declval<VertexTan>().pos) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexTan), (void*)0);
+	// Normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, sizeof(std::declval<VertexTan>().normals) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexTan), (void*)offsetof(VertexTan, normals));
+	// Texture
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, sizeof(std::declval<VertexTan>().tex_coords) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexTan), (void*)offsetof(VertexTan, tex_coords));
+	// Tangent
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, sizeof(std::declval<VertexTan>().tangents) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexTan), (void*)offsetof(VertexTan, tangents));
+	// Bitaangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, sizeof(std::declval<VertexTan>().bitangents) / sizeof(float), GL_FLOAT, GL_FALSE, sizeof(VertexTan), (void*)offsetof(VertexTan, bitangents));
+	VBO.Unbind();
+}
+
 FramebufferVAO::FramebufferVAO(VBO& VBO) {
 	glGenVertexArrays(1, &id);
 	Bind();
