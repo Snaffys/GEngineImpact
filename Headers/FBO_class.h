@@ -10,9 +10,10 @@
 class Framebuffer {
 public:
 	Framebuffer() = default;
-	Framebuffer(unsigned int width, unsigned int height, Texture& texture);
+	Framebuffer(unsigned int width, unsigned int height, Texture& texture, GLenum format = GL_RGBA, GLenum internal_format = GL_RGBA16F);
 	Framebuffer(unsigned int width, unsigned int height, ShadowTexture& texture);
 	Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture* textures[], int textures_amount);
+	Framebuffer(unsigned int width, unsigned int height, Texture* texture[], int textures_amount, GLenum* tex_internal_fomat, GLenum* tex_type, GLenum tex_format = GL_RED);
 	Framebuffer(unsigned int width, unsigned int height, Texture* texture[], int textures_amount);
 
 	void BindFramebuffer();

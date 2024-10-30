@@ -8,6 +8,9 @@
 #include <iostream>
 #include <assert.h>
 
+#include <iostream>
+#include <random>
+
 #include "Camera_class.h"
 #include "Model_class.h"
 
@@ -24,7 +27,6 @@ class Window {
 public:
 	Window(unsigned int width = 1900, unsigned int height = 1284);
 
-	// Callbacks
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void mouse_callback(GLFWwindow* window, double x_pos, double y_posintion);
 	static void scroll_callback(GLFWwindow* window, double x_offset, double y_offset);
@@ -33,17 +35,16 @@ public:
 
 	~Window();
 private:
-	const unsigned int samples = 22;
+	// Multisampling
+	const unsigned int samples = 12;
 
-	float near_plane_camera = 0.1f;
-	float far_plane_camera = 100.0f;
-
+	// Directional shadow
 	unsigned int shadow_size = 2048;
 	float near_plane_shadow = 0.1f;
 	float far_plane_shadow = 100.0f;
 
+	// Point shadow
 	unsigned int point_shadow_map_id[4];
-
 	unsigned int cubemap_shadow_size = 2048;
 	float near_plane_cubamap_shadow = 0.1f;
 	float far_plane_cubemap_shadow = 15.0f;
@@ -63,61 +64,52 @@ private:
 	Shader instancing_shader;
 	Shader object_shader;
 	Shader normal_map_shader;
-	
-	//Shader shadow_shader;
-	
-	Shader shadow_objects;
+	Shader blur_shader;
 	Shader discard_shadow;
 	Shader geom_test;
 	Shader normal_visualizing;
+	// Shadow shaders
+	Shader shadow_objects;
 	Shader point_shadow_objects;
 	Shader point_discard_shadow;
 	Shader normal_map_shadow;
 	Shader point_normal_map_shadow;
 
-	Shader blur_shader;
-
-	unsigned int ubo_matrices;
-
-
-	// Flashlight
-	bool flashlight;
+	Shader gbuffer_shader;
+	Shader gbuffer_lighting_shader;
+	Shader gbuffer_shader_model;
+	Shader ssao_shader;
+	Shader ssao_blur_shader;
 
 	// Textures
 	Texture diffuse_map;
 	Texture specular_map;
 	Texture grass_tex;
 	Texture window_tex;
-
-	ShadowTexture directional_shadow_fbo_tex;
-	ShadowTexture spot_shadow_fbo_tex;
-
 	Texture diffuse_brick_map;
 	Texture black_specular_map;
 	Texture normal_map_tex;
-
 	Texture displacement_map_tex;
-	Texture ping_fbo_tex, pong_fbo_tex;
-
-	// Models
-	Model loaded_model;
-	Model reflected_model;
-
 	Texture cubemap_tex;
-	
+	Texture ssao_noise_tex;
+	Texture ssao_fbo_tex;
+	Texture ssao_fbo_blur_tex;
+	ShadowTexture directional_shadow_fbo_tex;
+	ShadowTexture spot_shadow_fbo_tex;
+	Texture ping_fbo_tex, pong_fbo_tex;
+	MultisampledTexture anti_aliasing_fbo_tex1;
+	MultisampledTexture anti_aliasing_fbo_tex2;
+	MultisampledTexture transparent_fbo_tex;
+	Texture post_proc_fbo_tex1, post_proc_fbo_tex2;
+	Texture gbuffer_pos_tex, gbuffer_normal_tex, gbuffer_albedospec_tex;
 	CubemapShadowTexture point_shadow_fbo_tex1;
 	CubemapShadowTexture point_shadow_fbo_tex2;
 	CubemapShadowTexture point_shadow_fbo_tex3;
 	CubemapShadowTexture point_shadow_fbo_tex4;
 
-	MultisampledTexture anti_aliasing_fbo_tex1;
-	MultisampledTexture anti_aliasing_fbo_tex2;
-
-	Texture post_proc_fbo_tex1, post_proc_fbo_tex2;
-
-
-	MultisampledTexture transparent_fbo_tex;
-
+	// Models
+	Model loaded_model;
+	Model reflected_model;
 
 	// Buffers
 	VAO vao_model;
@@ -127,7 +119,7 @@ private:
 	NormalVAO normal_map_vao;
 	FramebufferVAO geom_vao;
 	FramebufferVAO framebuffer_vao;
-	CubemapVAO cubemap_vao;
+	CubemapVAO cubemap_vao;	
 	VBO vbo;
 	VBO transparent_vbo;
 	VBO framebuffer_vbo;
@@ -141,12 +133,20 @@ private:
 	VBO geom_vbo;
 	VBO normal_map_vbo;
 	VBO normal_map_vbo_storage;
+	unsigned int ubo_matrices;
+	UniformBuffer pos_matrix_ubo;
+	UniformBuffer light_matrix_ubo;
+	UniformBuffer point_light_matrix_ubo;
+	UniformBuffer light_data_ubo;
 	EBO ebo;
+
+	// Framebuffer
 	Framebuffer anti_aliasing_fbo;
 	Framebuffer post_proc_fbo;
-	Framebuffer transparent_fbo;
 	Framebuffer ping_fbo, pong_fbo;
-	
+	Framebuffer gbuffer;
+	Framebuffer ssao_fbo;
+	Framebuffer ssao_fbo_blur;
 	ShadowFramebuffer directional_shadow_fbo;
 	ShadowFramebuffer spot_shadow_fbo;
 	ShadowFramebuffer cubemap_shadow_fbo1;
@@ -154,55 +154,52 @@ private:
 	ShadowFramebuffer cubemap_shadow_fbo3;
 	ShadowFramebuffer cubemap_shadow_fbo4;
 
-	UniformBuffer pos_matrix_ubo;
-	UniformBuffer light_matrix_ubo;
-	UniformBuffer point_light_matrix_ubo;
-	UniformBuffer light_data_ubo;
+	// HDR
+	float exposure = 1.0f;
+
+	std::vector<glm::vec3> ssao_kernel;
+	std::vector<glm::vec3> ssao_noise;
 
 	// Camera
 	Camera camera;
 	float delta_time;
 	float last_frame;
 	float last_x, last_y;
-	float camera_fov;
 	bool first_mouse;
+	float camera_fov;
+	float near_plane_camera = 0.1f;
+	float far_plane_camera = 100.0f;
+
+	// Flashlight
+	bool flashlight;
 
 
 
-	float exposure = 1.0f;
+	void draw_ojbect(int objects_amount, glm::vec3* model_positions);
 
-	// Light settings
+	void draw_light_blocks(int point_light_size, glm::vec3* point_spec_power, glm::vec3* point_light_pos);
+
+	void draw_model(Shader& shader, glm::vec3 translate, glm::vec3 scale, float rotate_angle, glm::vec3 rotate, Model& loaded_model);
+	void draw_model(Shader& shader, Model& loaded_model);
+	void draw_model(Shader& shader, Model& loaded_model, unsigned int models_amount);
+
 	void dir_light_settings(glm::vec3 dir_light_color, Shader& shader, UniformBuffer& ubo);
 	void point_light_settings(int point_light_size, glm::vec3* point_light_pos, glm::vec3* point_ambient_power, glm::vec3* point_diff_power, glm::vec3* point_spec_power, glm::vec3* point_light_colors);
 	void spot_light_settings(glm::vec3 spot_light_color, glm::vec3 cam_pos, glm::vec3 cam_front, Shader& shader, UniformBuffer& ubo);
 
-	// Draws light blocks
-	void draw_light_blocks(int point_light_size, glm::vec3* point_spec_power, glm::vec3* point_light_pos);
+	std::vector<glm::mat4> CalcPointShadowMatrices(glm::mat4 shadow_projection_mat, glm::vec3 light_pos);
 
-	// Draws ojbects
-	void draw_ojbect(int objects_amount, glm::vec3* model_positions);
-
-	// Draws models
-	void draw_model(Shader& shader, glm::vec3 translate, glm::vec3 scale, float rotate_angle, glm::vec3 rotate, Model& loaded_model);
-
-	void draw_model(Shader& shader, Model& loaded_model);
-
-	void draw_model(Shader& shader, Model& loaded_model, unsigned int models_amount);
+	void render_shadow_map(Shader& default_shader, Shader& discard_shader, Shader& normal_map_shader, std::map<float, glm::vec3> sorted, glm::mat4 windows_pos_mat[], 
+							glm::mat4 grass_pos_mat[], unsigned int objects_amount, unsigned int normal_map_objects_amount, int reflected_models_amount, int models_amount);
 
 	// Sets projection and view matrices
 	void set_coord_systems(Shader& shader, glm::mat4 proj, glm::mat4 view);
-
 	glm::mat4 get_projection_perspective(float pov, float aspect, float near_plane, float far_plane);
-
 	glm::mat4 get_projection_ortho(float near_plane, float far_plane);
 
 	void bind_uniform_block(unsigned int shader_id[], const unsigned int arr_size, const char* uniform_block, unsigned int binding_point);
 
 	void processInput(GLFWwindow* window);
-
-	void render_shadow_map(Shader& default_shader, Shader& discard_shader, Shader& normal_map_shader, std::map<float, glm::vec3> sorted, glm::mat4 windows_pos_mat[], glm::mat4 grass_pos_mat[], unsigned int objects_amount, unsigned int normal_map_objects_amount, int reflected_models_amount, int models_amount);
-
-	std::vector<glm::mat4> CalcPointShadowMatrices(glm::mat4 shadow_projection_mat, glm::vec3 light_pos);
 };
 
 #endif

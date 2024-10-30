@@ -1,8 +1,35 @@
 #include "Texture_class.h"
 
+Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, bool flip) {
+	// Generates textures names, activates and binds textures
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+
+	// Texture stretching
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, tex_wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tex_wrapping);
+
+	// Texture filtering(blurred or pixeled)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);	// zoomed out so far
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	// zoomed in so close
+
+	// Texture flip
+	stbi_set_flip_vertically_on_load(flip);
+	// Gets data about texture from file
+	data = stbi_load(image, &img_width, &img_height, &num_col_chan, 0);
+	// Checks for errors
+	assert(data && "Failed to load texture");
+	// Generates currently bounded texture
+	glTexImage2D(GL_TEXTURE_2D, 0, format, img_width, img_height, 0, format, GL_UNSIGNED_BYTE, data);
+	// Generates mipmap
+	glGenerateMipmap(GL_TEXTURE_2D);
+	// Frees data
+	stbi_image_free(data);
+	stbi_set_flip_vertically_on_load(false);
+}
+
 Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format, bool flip) {
-	if (internal_format == NULL)
-		internal_format = format;
 	// Generates textures names, activates and binds textures
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
@@ -31,13 +58,21 @@ Texture::Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum i
 	stbi_set_flip_vertically_on_load(false);
 }
 
-Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
-	if (internal_format == NULL)
-		internal_format = format;
+Texture::Texture(GLenum internal_format, const unsigned int tex_width, const unsigned int tex_height, GLenum format, GLenum type, std::vector<glm::vec3>& ssao_noise) {
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
 	Bind();
-	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, img_width, img_height, 0, format, type, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, tex_width, tex_height, 0, format, type, &ssao_noise[0]);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget) {
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, format, img_width, img_height, 0, format, type, NULL);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -47,10 +82,38 @@ Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int
 	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D, id, 0);
 }
 
+Texture::Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, internal_format, img_width, img_height, 0, format, type, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D, id, 0);
+}
+
+ShadowTexture::ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget) {
+	glGenTextures(1, &id);
+	glActiveTexture(GL_TEXTURE0 + id - 1);
+	Bind();
+	glTexImage2D(GL_TEXTURE_2D, 0, format, img_width, img_height, 0, format, type, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+	float borderColor[] = { 1.0f,1.0f,1.0f,1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, textarget, GL_TEXTURE_2D, id, 0);
+}
 
 ShadowTexture::ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format) {
-	if (internal_format == NULL)
-		internal_format = format;
 	glGenTextures(1, &id);
 	glActiveTexture(GL_TEXTURE0 + id - 1);
 	Bind();

@@ -1,12 +1,12 @@
 #include"FBO_class.h"
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture& texture) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture& texture, GLenum format, GLenum internal_format) {
 	// Generates and binds framebuffers
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	// Allocates memory for renderbuffer
 
-	texture = { GL_RGBA, width, height, GL_FLOAT, GL_COLOR_ATTACHMENT0, GL_RGBA16F };
+	texture = { format, width, height, GL_FLOAT, GL_COLOR_ATTACHMENT0, internal_format };
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
@@ -25,8 +25,8 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture* textu
 
 	glGenRenderbuffers(1, &renderbuffer_id);
 	BindRenderbuffer();
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer_id);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer_id);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
@@ -36,20 +36,41 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture* textu
 	UnbindFramebuffer();
 }
 
+
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, Texture* texture[], int textures_amount, GLenum* tex_internal_fomat, GLenum* tex_type, GLenum tex_format) {
+	// Generates and binds framebuffers
+	glGenFramebuffers(1, &framebuffer_id);
+	BindFramebuffer();
+
+	for (unsigned int i = 0; i < textures_amount; i++)
+		*texture[i] = { tex_format, width, height, *(tex_type + i), GL_COLOR_ATTACHMENT0 + i, *(tex_internal_fomat + i)};
+
+	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+
+	glGenRenderbuffers(1, &renderbuffer_id);
+	BindRenderbuffer();
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer_id);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		printf("ERROR::FRAMEBUFFER::Framebuffer is not complete!");
+
+	UnbindFramebuffer();
+}
+
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const unsigned int samples_amount, MultisampledTexture* textures[], int textures_amount) {
 	// Generates and binds framebuffers
 	glGenFramebuffers(1, &framebuffer_id);
 	BindFramebuffer();
 	
-	for (unsigned int i = 0; i < textures_amount; i++) {
+	for (unsigned int i = 0; i < textures_amount; i++)
 		// Allocates memory for renderbuffer
-		*textures[i] = {GL_RGBA16F, samples_amount, width, height, GL_COLOR_ATTACHMENT0 + i};
-	}
+		*textures[i] = {GL_RGBA, samples_amount, width, height, GL_COLOR_ATTACHMENT0 + i};
 	
 	// Generates renderbuffer
 	glGenRenderbuffers(1, &renderbuffer_id);
 	BindRenderbuffer();
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples_amount, GL_DEPTH24_STENCIL8, width, height);
 	UnbindRenderbuffer();
 	// Attaches renderbuffer object to the depth and stencil attachment of the framebuffer

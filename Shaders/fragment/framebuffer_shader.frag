@@ -17,11 +17,17 @@ void main(){
     vec3 hdr_color = texture(screen_texture, fs_in.tex_coords).rgb;
     vec3 bloom_color = texture(bloom_blur, fs_in.tex_coords).rgb;
     hdr_color += bloom_color;
+
     vec3 mapped = vec3(1.0f) - exp(-hdr_color * exposure);
     mapped = pow(mapped, vec3(1.0f/gamma));
-    
-    
 
+
+	//float gamma = 2.2;
+    //vec3 hdr_color = texture(screen_texture, fs_in.tex_coords).rgb;
+    //vec3 mapped = pow(hdr_color, vec3(1.0f/gamma));
+    
+    
+    //frag_color = vec4(texture(screen_texture, fs_in.tex_coords).rgb, 1.0f);
 	//// Inversion
 	//mapped = vec3(1.0 - mapped);
 

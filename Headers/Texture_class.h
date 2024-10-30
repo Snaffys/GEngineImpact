@@ -17,19 +17,28 @@
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 
 class Texture {
 public:
 	Texture() = default;
 
-	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format = NULL, bool flip = true);
-	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format = NULL);
+
+	Texture(const char* image, GLenum tex_wrapping, GLenum format, bool flip = true);
+	Texture(const char* image, GLenum tex_wrapping, GLenum format, GLenum internal_format, bool flip);
+	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget);
+	Texture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format);
 
 	Texture(std::string filename, const std::string directory, const char* typeName, bool gamma = false);
 	Texture(const unsigned int shadow_width, const unsigned int shadow_height);
 
 	Texture(const int rows, const int cols, const char* faces);
+
+	Texture(GLenum internal_format, const unsigned int tex_width, const unsigned int tex_height, GLenum format, GLenum type, std::vector<glm::vec3>& ssao_noise);
 
 	//Texture(GLenum format, const unsigned int samples_amount, const unsigned int img_width, const unsigned int img_height);
 
@@ -80,7 +89,8 @@ public:
 class ShadowTexture : public Texture{
 public:
 	ShadowTexture() = default;
-	ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format = NULL); 
+	ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget);
+	ShadowTexture(GLenum format, const unsigned int img_width, const unsigned int img_height, GLenum type, GLenum textarget, GLenum internal_format); 
 };
 
 

@@ -203,6 +203,24 @@
     <None Include="Shaders\fragment\gaussian_blur.frag">
       <Filter>Resource Files\Shaders\fragment</Filter>
     </None>
+    <None Include="Shaders\vertex\gbuffer.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\gbuffer.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\fragment\light_gbuffer.frag">
+      <Filter>Resource Files\Shaders\fragment</Filter>
+    </None>
+    <None Include="Shaders\vertex\light_gbuffer.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\vertex\gbuffer_model.vert">
+      <Filter>Resource Files\Shaders\vertex</Filter>
+    </None>
+    <None Include="Shaders\fragment\gbuffer_model.frag" />
+    <None Include="Shaders\fragment\ssao.frag" />
+    <None Include="Shaders\fragment\ssao_blur.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\spiderman.png">
